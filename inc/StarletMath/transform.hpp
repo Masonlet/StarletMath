@@ -1,7 +1,7 @@
 #pragma once
 
-#include "math/vec3.hpp"
-#include "math/vec4.hpp"
+#include "vec3.hpp"
+#include "vec4.hpp"
 
 struct Transform {
 	Vec4 pos{0.0f};
