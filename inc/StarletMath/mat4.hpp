@@ -212,6 +212,47 @@ struct Mat4 {
     result.models[5] =  c;
     return result;
   }
+  static Mat4 lookAt(const Vec3& pos, const Vec3& front, const Vec3& up = WORLD_UP){
+    const Vec3 forward = front.normalized();
+    Vec3 right = forward.cross(up);
+    if(right.length() < 0.00001f) right = { 1.0f, 0.0f, 0.0f };
+    else                          right = right.normalized();
+    const Vec3 camUp = right.cross(forward);
+
+    Mat4 view{};
+    view.models[0] = right.x;
+    view.models[1] = camUp.x;
+    view.models[2] = -forward.x;
+    view.models[3] = 0.0f;
+
+    view.models[4] = right.y;
+    view.models[5] = camUp.y;
+    view.models[6] = -forward.y;
+    view.models[7] = 0.0f;
+
+    view.models[8] = right.z;
+    view.models[9] = camUp.z;
+    view.models[10] = -forward.z;
+    view.models[11] = 0.0f;
+
+    view.models[12] = -right.dot(pos);
+    view.models[13] = -camUp.dot(pos);
+    view.models[14] = forward.dot(pos);
+    view.models[15] = 1.0f;
+    return view;
+  }
+  static Mat4 perspective(const float degFov, const float aspect, const float nearPlane, const float farPlane){
+    const float tanHalfFov = tanf(radians(degFov) / 2.0f);
+
+    Mat4 projection{};
+    projection.models[0]  =   1.0f / (aspect * tanHalfFov);
+    projection.models[5]  =   1.0f / tanHalfFov;
+    projection.models[10] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+    projection.models[11] =  -1.0f;
+    projection.models[14] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+    projection.models[15] =   0.0f;
+    return projection;
+  }
 
   Mat4 operator*(const Mat4& b) const {
     Mat4 result{};
