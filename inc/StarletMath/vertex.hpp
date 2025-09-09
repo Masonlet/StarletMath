@@ -8,5 +8,5 @@ struct Vertex {
 	Vec3 pos{ 0.0f };     
 	Vec4 col{ 1.0f };    
 	Vec3 norm{ 0.0f };    
-	Vec2 texCoord{ 0.0f }; 
+	Vec2<float> texCoord{ 0.0f }; 
 };
