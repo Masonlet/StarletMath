@@ -24,12 +24,9 @@ This makes it perfect for learning, experimentation, but not a drop-in replaceme
 ```cmake
 include(FetchContent)
 
-FetchContent_Declare(StarletMath
-  GIT_REPOSITORY https://github.com/Masonlet/StarletMath.git
-  GIT_TAG main
-)
+FetchContent_Declare(StarletMath GIT_REPOSITORY https://github.com/Masonlet/StarletMath.git GIT_TAG main)
 FetchContent_MakeAvailable(StarletMath)
 
-target_link_libraries(YourApp PRIVATE StarletMath)
+target_link_libraries(YourAppName PRIVATE StarletMath)
 ```
 
