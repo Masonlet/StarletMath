@@ -6,7 +6,7 @@
 
 constexpr unsigned int NUMBEROFLIGHTS{ 50 };
 
-constexpr Vec2 DEFAULT_SIZE_2D{ 1.0f, 1.0f };
+constexpr Vec2<float> DEFAULT_SIZE_2D { 1.0f, 1.0f };
 constexpr Vec3 DEFAULT_SIZE_3D{ 1.0f, 1.0f, 1.0f };
 constexpr Vec3 DEFAULT_ROTATION{ 0.0f, 0.0f, 0.0f };
 constexpr Vec3 DEFAULT_SCALE{ 1.0f, 1.0f, 1.0f };
