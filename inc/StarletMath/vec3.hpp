@@ -11,8 +11,8 @@ Vec3
 template<typename T>
 struct Vec3 {
 	union {
-		struct { float x, y, z; };
-		struct { float r, g, b; };
+		struct { T x, y, z; };
+		struct { T r, g, b; };
 	};
 
 	constexpr Vec3() : x(T(0)), y(T(0)), z(T(0)) {}
@@ -22,8 +22,8 @@ struct Vec3 {
 
 	Vec3& operator=(const Vec3& other) = default;
 
-  T length() const {  return std::sqrt(x * x + y * y + z * z); }
-  T lengthSquared() const { return x * x + y * y + z * z; }
+  double length() const {  return std::sqrt(static_cast<double>(x) * x + static_cast<double>(y) * y + static_cast<double>(z) * z); }
+  double lengthSquared() const { return static_cast<double>(x) * x + static_cast<double>(y) * y + static_cast<double>(z) * z; }
 
 	Vec3<double> normalized() const requires std::is_integral_v<T> {
 		double len = length();
