@@ -1,69 +1,64 @@
 #pragma once
 
 #include <cmath>
+#include <type_traits>
 
 /*
 Vec3
-* 3-Dimensional Floating Point Vector
-* float x, float y, float z
+* 3-Dimensional Vector
+* x, y, z OR r, g, b
 */
+template<typename T>
 struct Vec3 {
 	union {
 		struct { float x, y, z; };
 		struct { float r, g, b; };
 	};
 
-	constexpr Vec3() : x(0.0f), y(0.0f), z(0.0f) {};
-	constexpr Vec3(const Vec3& b) : x{ b.x }, y{ b.y }, z{ b.z } {};
-	constexpr Vec3(float f) : x(f), y(f), z(f) {}
-	constexpr Vec3(float xIn, float yIn, float zIn) : x(xIn), y(yIn), z(zIn) {}
+	constexpr Vec3() : x(T(0)), y(T(0)), z(T(0)) {}
+	constexpr Vec3(T val) : x(val), y(val), z(val) {}
+	constexpr Vec3(T xIn, T yIn, T zIn) : x(xIn), y(yIn), z(zIn) {}
+	constexpr Vec3(const Vec3& other) = default;
 
-  float length() const { 
-    return sqrt(x * x + y * y + z * z); 
-  }
-  inline float lengthSquared() const { return x * x + y * y + z * z; }
+	Vec3& operator=(const Vec3& other) = default;
 
-  Vec3 normalized() const {
-    float len = lengthSquared();
-    if (len < 1e-6f) return {0.0f, 0.0f, 0.0f};
+  T length() const {  return std::sqrt(x * x + y * y + z * z); }
+  T lengthSquared() const { return x * x + y * y + z * z; }
 
-    len = sqrt(len);
-    return {x / len, y / len, z / len};
-  }	
-
-  inline Vec3 cross(const Vec3& b) const { return { y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x }; }
-  inline float dot(const Vec3& b) const { return x * b.x + y * b.y + z * b.z; }
-
-	inline Vec3 operator+(const Vec3& b) const { return { x + b.x, y + b.y, z + b.z }; }
-	inline Vec3 operator-(const Vec3& b) const { return { x - b.x, y - b.y, z - b.z }; }
-	inline Vec3 operator*(const Vec3& b) const { return { x * b.x, y * b.y, z * b.z }; }
-	inline Vec3& operator+=(const Vec3& b) {
-		x += b.x, y += b.y, z += b.z;
-		return *this;
+	Vec3<double> normalized() const requires std::is_integral_v<T> {
+		double len = length();
+		return (len < 1e-6) ? Vec3<double>(0.0) : Vec3<double>(x / len, y / len, z / len);
 	}
-	inline Vec3& operator-=(const Vec3& b) {
-		x -= b.x, y -= b.y, z -= b.z;
-		return *this;
+	Vec3<T> normalized() const requires std::is_floating_point_v<T> {
+		T len = length();
+		return (len < 1e-6) ? Vec3<T>(T(0)) : Vec3<T>(x / len, y / len, z / len);
 	}
 
-	inline Vec3 operator+(const float b) const { return { x + b, y + b, z + b }; }
-	inline Vec3 operator-(const float b) const { return { x - b, y - b, z - b }; }
-	inline Vec3 operator*(const float b) const { return { x * b, y * b, z * b }; }
-	inline Vec3 operator/(const float b) const { return { x / b, y / b, z / b }; }
-	inline Vec3& operator+=(const float b) {
-		x += b, y += b, z += b;
-		return *this;
-	}
-	inline Vec3& operator*=(const float b) {
-		x *= b, y *= b, z *= b;
-		return *this;
-	}
-	inline Vec3& operator-=(const float b) {
-		x -= b, y -= b, z -= b;
-		return *this;
-	}
+  Vec3 cross(const Vec3& rhs) const { return { y * rhs.z - z * rhs.y, z * rhs.x - x * rhs.z, x * rhs.y - y * rhs.x }; }
+  T dot(const Vec3& rhs) const { return x * rhs.x + y * rhs.y + z * rhs.z; }
 
-	inline bool operator!=(const Vec3& b) const {
-		return x != b.x || y != b.y || z != b.z;
-	}
+	Vec3 operator-() const { return Vec3(-x, -y, -z); }
+
+	Vec3 operator+(const Vec3& rhs) const { return Vec3{ x + rhs.x, y + rhs.y, z + rhs.z }; }
+	Vec3 operator-(const Vec3& rhs) const { return Vec3{ x - rhs.x, y - rhs.y, z - rhs.z }; }
+	Vec3 operator*(const Vec3& rhs) const { return Vec3{ x * rhs.x, y * rhs.y, z * rhs.z }; }
+	Vec3 operator/(const Vec3& rhs) const { return Vec3{ x / rhs.x, y / rhs.y, z / rhs.z }; }
+
+	Vec3 operator+(const T rhs) const { return Vec3{ x + rhs, y + rhs, z + rhs }; }
+	Vec3 operator-(const T rhs) const { return Vec3{ x - rhs, y - rhs, z - rhs }; }
+	Vec3 operator*(const T rhs) const { return Vec3{ x * rhs, y * rhs, z * rhs }; }
+	Vec3 operator/(const T rhs) const { return Vec3{ x / rhs, y / rhs, z / rhs }; }
+
+	Vec3& operator+=(const Vec3& rhs) { x += rhs.x; y += rhs.y; z += rhs.z; return *this; }
+	Vec3& operator-=(const Vec3& rhs) { x -= rhs.x; y -= rhs.y; z -= rhs.z; return *this; }
+	Vec3& operator*=(const Vec3& rhs) { x *= rhs.x; y *= rhs.y; z *= rhs.z; return *this; }
+	Vec3& operator/=(const Vec3& rhs) { x /= rhs.x; y /= rhs.y; z /= rhs.z; return *this; }
+
+	Vec3& operator+=(const T rhs) { x += rhs; y += rhs; z += rhs; return *this; }
+	Vec3& operator*=(const T rhs) { x *= rhs; y *= rhs; z *= rhs; return *this; }
+	Vec3& operator-=(const T rhs) { x -= rhs; y -= rhs; z -= rhs; return *this; }
+	Vec3& operator/=(const T rhs) { x /= rhs; y /= rhs; z /= rhs; return *this; }
+
+	bool operator==(const Vec3& rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z; }
+	bool operator!=(const Vec3& rhs) const { return !(*this == rhs); }
 };

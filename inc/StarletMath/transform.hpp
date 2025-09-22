@@ -4,7 +4,7 @@
 #include "vec4.hpp"
 
 struct Transform {
-	Vec4 pos{0.0f};
-	Vec3 rot{0.0f};
-	Vec3 size{1.0f};
+	Vec4<float> pos{0.0f};
+	Vec3<float> rot{0.0f};
+	Vec3<float> size{1.0f};
 };

@@ -2,65 +2,64 @@
 
 #include "vec3.hpp"
 #include <cmath>
+#include <type_traits>
 
 /*
 Vec4
-* 4-Dimensional Floating Point Vector
-* float x, float y, float z, float w
+* 4-Dimensional Vector
+* x, y, z, w OR r, g, b, a
 */
+template <typename T>
 struct Vec4 {
 	union {
 		struct { float x, y, z, w; };
 		struct { float r, g, b, a; };
 	};
 
-	constexpr Vec4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
-	constexpr Vec4(const Vec4& b) { x = b.x, y = b.y, z = b.z, w = b.w; };
-	constexpr Vec4(float f) : x(f), y(f), z(f), w(f) {}
-	Vec4(const Vec3& v, float wIn) : x(v.x), y(v.y), z(v.z), w(wIn) {}
-	Vec4(unsigned int x, const Vec3& v) : x(x), y(v.x), z(v.y), w(v.z) {}
-  constexpr Vec4(float xIn, float yIn, float zIn, float wIn) { x = xIn, y = yIn, z = zIn, w = wIn; }
+	constexpr Vec4() : x(T(0)), y(T(0)), z(T(0)), w(T(0)) {}
+	constexpr Vec4(T v) : x(v), y(v), z(v), w(v) {}
+	constexpr Vec4(T xIn, T yIn, T zIn, T wIn) : x(xIn), y(yIn), z(zIn), w(wIn) {}
+	constexpr Vec4(const Vec3<T>& v, T wIn) : x(v.x), y(v.y), z(v.z), w(wIn) {}
+	constexpr Vec4(const Vec4<T>& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
-  float length() const { 
-    return sqrt(x * x + y * y + z * z + w * w); 
-  }
-  inline float lengthSquared() const { return x * x + y * y + z * z + w * w; }
+	Vec4& operator=(const Vec4& other) = default;
 
-  Vec4 normalized() const {
-    float len = lengthSquared();
-    if (len < 1e-6f) return {0.0f, 0.0f, 0.0f, 0.0f};
+  T length() const { return std::sqrt(x * x + y * y + z * z + w * w); }
+  T lengthSquared() const { return x * x + y * y + z * z + w * w; }
 
-    len = sqrt(len);
-    return {x / len, y / len, z / len, w / len};
-  }
-
-	inline float dot(const Vec4& b) const { return x * b.x + y * b.y + z * b.z + w * b.w; }
-
-	inline Vec4 operator+(const Vec4& b) const { return {x + b.x, y + b.y, z + b.z, w + b.w }; }
-	inline Vec4 operator-(const Vec4& b) const { return {x - b.x, y - b.y, z - b.z, w - b.w}; }
-	inline Vec4 operator*(const Vec4& b) const { return {x * b.x, y * b.y, z * b.z, w * b.w}; }
-	inline Vec4& operator+=(const Vec4& b) {
-		x += b.x, y += b.y, z += b.z, w += b.w;
-		return *this;
+	Vec4<double> normalized() const requires std::is_integral_v<T> {
+		double len = length();
+		return (len < 1e-6) ? Vec4<double>(0.0) : Vec4<double>(x / len, y / len, z / len, w / len);
 	}
-	inline Vec4& operator-=(const Vec4& b) {
-		x -= b.x, y -= b.y, z -= b.z, w -= b.w;
-		return *this;
+	Vec4<T> normalized() const requires std::is_floating_point_v<T> {
+		T len = length();
+		return (len < 1e-6) ? Vec4<T>(T(0)) : Vec4<T>(x / len, y / len, z / len, w / len);
 	}
 
-	inline Vec4 operator+(const float b) const { return {x + b, y + b, z + b, w + b}; }
-	inline Vec4 operator-(const float b) const { return {x - b, y - b, z - b, w - b}; }
-	inline Vec4 operator*(const float b) const { return {x * b, y * b, z * b, w * b}; }
-	inline Vec4& operator+=(const float b) {
-		x += b, y += b, z += b, w += b;
-		return *this;
-	}
-	inline Vec4& operator-=(const float b) {
-		x -= b, y -= b, z -= b, w -= b;
-		return *this;
-	}
+	T dot(const Vec4& rhs) const { return x * rhs.x + y * rhs.y + z * rhs.z + w * rhs.w; }
 
-	inline bool operator!=(const Vec4& b) {
-		return x != b.x && y != b.y && z != b.z && w != b.w;
-	}
+	Vec4 operator-() const { return Vec4(-x, -y, -z, -w); }
+
+  Vec4 operator+(const Vec4& rhs) const { return { x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w }; }
+	Vec4 operator-(const Vec4& rhs) const { return { x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w}; }
+	Vec4 operator*(const Vec4& rhs) const { return { x * rhs.x, y * rhs.y, z * rhs.z, w * rhs.w}; }
+	Vec4 operator/(const Vec4& rhs) const { return { x / rhs.x, y / rhs.y, z / rhs.z, w / rhs.w }; }	
+
+	Vec4 operator+(const T rhs) const { return { x + rhs, y + rhs, z + rhs, w + rhs }; }
+	Vec4 operator-(const T rhs) const { return { x - rhs, y - rhs, z - rhs, w - rhs }; }
+	Vec4 operator*(const T rhs) const { return { x * rhs, y * rhs, z * rhs, w * rhs }; }
+	Vec4 operator/(const T rhs) const { return { x / rhs, y / rhs, z / rhs, w / rhs }; }
+
+	Vec4& operator+=(const Vec4& rhs) { x += rhs.x, y += rhs.y, z += rhs.z, w += rhs.w; return *this; }
+	Vec4& operator-=(const Vec4& rhs) { x -= rhs.x, y -= rhs.y, z -= rhs.z, w -= rhs.w; return *this; }
+	Vec4& operator*=(const Vec4& rhs) { x *= rhs.x, y *= rhs.y, z *= rhs.z, w *= rhs.w; return *this; }
+	Vec4& operator/=(const Vec4& rhs) { x /= rhs.x, y /= rhs.y, z /= rhs.z, w /= rhs.w; return *this; }
+
+	Vec4& operator+=(const T rhs) { x += rhs, y += rhs, z += rhs, w += rhs; return *this; }
+	Vec4& operator-=(const T rhs) { x -= rhs, y -= rhs, z -= rhs, w -= rhs; return *this; }
+	Vec4& operator*=(const T rhs) { x *= rhs, y *= rhs, z *= rhs, w *= rhs; return *this; }
+	Vec4& operator/=(const T rhs) { x /= rhs, y /= rhs, z /= rhs, w /= rhs; return *this; }
+
+	bool operator==(const Vec4& rhs) { return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w; }
+	bool operator!=(const Vec4& rhs) { return !(*this == rhs); }
 };

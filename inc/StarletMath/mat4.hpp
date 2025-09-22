@@ -162,14 +162,14 @@ struct Mat4 {
     for (int i = 0; i < 16; ++i) inv.models[i] *= det;
     return inv;
   }
-  static Mat4 translation(const Vec4& t) {
+  static Mat4 translation(const Vec4<float>& t) {
     Mat4 result = Mat4::identity();
     result.models[12] = t.x;
     result.models[13] = t.y;
     result.models[14] = t.z;
     return result;
   }
-  static Mat4 size(const Vec3& t) {
+  static Mat4 size(const Vec3<float>& t) {
     Mat4 result = Mat4::identity();
     result.models[0]  = t.x;
     result.models[5]  = t.y;
@@ -212,7 +212,7 @@ struct Mat4 {
     result.models[5] =  c;
     return result;
   }
-  static Mat4 lookAt(const Vec3& pos, const Vec3& front, const Vec3& up = WORLD_UP){
+  static Mat4 lookAt(const Vec3<float>& pos, const Vec3<float>& front, const Vec3<float>& up = WORLD_UP){
     const Vec3 forward = front.normalized();
     Vec3 right = forward.cross(up);
     if(right.length() < 0.00001f) right = { 1.0f, 0.0f, 0.0f };
@@ -283,8 +283,8 @@ struct Mat4 {
 
     return result;
   }
-  Vec4 operator*(const Vec4& v) const {
-    Vec4 result;
+  Vec4<float> operator*(const Vec4<float>& v) const {
+    Vec4<float> result;
     result.x = models[0] * v.x + models[4] * v.y + models[8] * v.z + models[12] * v.w;
     result.y = models[1] * v.x + models[5] * v.y + models[9] * v.z + models[13] * v.w;
     result.z = models[2] * v.x + models[6] * v.y + models[10] * v.z + models[14] * v.w;
