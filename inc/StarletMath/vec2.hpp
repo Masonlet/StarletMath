@@ -27,7 +27,7 @@ struct Vec2 {
     return (len < 1e-6) ? Vec2<double>(0) : Vec2<double>(x / len, y / len);
   }
   Vec2<T> normalized() const requires std::is_floating_point_v<T> {
-    T len = length();
+    T len = static_cast<T>(length());
     return (len < 1e-6) ? Vec2<T>(0) : Vec2<T>(x / len, y / len);
   }
 

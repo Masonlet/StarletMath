@@ -12,8 +12,8 @@ Vec4
 template <typename T>
 struct Vec4 {
 	union {
-		struct { float x, y, z, w; };
-		struct { float r, g, b, a; };
+		struct { T x, y, z, w; };
+		struct { T r, g, b, a; };
 	};
 
 	constexpr Vec4() : x(T(0)), y(T(0)), z(T(0)), w(T(0)) {}
@@ -24,15 +24,15 @@ struct Vec4 {
 
 	Vec4& operator=(const Vec4& other) = default;
 
-  T length() const { return std::sqrt(x * x + y * y + z * z + w * w); }
-  T lengthSquared() const { return x * x + y * y + z * z + w * w; }
+  double length() const { return std::sqrt(static_cast<double>(x) * x + static_cast<double>(y) * y + static_cast<double>(z) * z + static_cast<double>(w) * w); }
+  double lengthSquared() const { return static_cast<double>(x) * x + static_cast<double>(y) * y + static_cast<double>(z) * z + static_cast<double>(w) * w; }
 
 	Vec4<double> normalized() const requires std::is_integral_v<T> {
 		double len = length();
 		return (len < 1e-6) ? Vec4<double>(0.0) : Vec4<double>(x / len, y / len, z / len, w / len);
 	}
 	Vec4<T> normalized() const requires std::is_floating_point_v<T> {
-		T len = length();
+		T len = static_cast<T>(length());
 		return (len < 1e-6) ? Vec4<T>(T(0)) : Vec4<T>(x / len, y / len, z / len, w / len);
 	}
 

@@ -30,7 +30,7 @@ struct Vec3 {
 		return (len < 1e-6) ? Vec3<double>(0.0) : Vec3<double>(x / len, y / len, z / len);
 	}
 	Vec3<T> normalized() const requires std::is_floating_point_v<T> {
-		T len = length();
+		T len = static_cast<T>(length());
 		return (len < 1e-6) ? Vec3<T>(T(0)) : Vec3<T>(x / len, y / len, z / len);
 	}
 
