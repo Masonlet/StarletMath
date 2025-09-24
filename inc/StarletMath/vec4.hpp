@@ -1,8 +1,10 @@
 #pragma once
 
 #include "vec3.hpp"
+
 #include <cmath>
 #include <type_traits>
+#include <ostream>
 
 /*
 Vec4
@@ -62,4 +64,6 @@ struct Vec4 {
 
 	bool operator==(const Vec4& rhs) { return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w; }
 	bool operator!=(const Vec4& rhs) { return !(*this == rhs); }
+
+	friend std::ostream& operator<<(std::ostream& os, const Vec4& v) { return os << v.x << ' ' << v.y << ' ' << v.z << ' ' << v.w; }
 };

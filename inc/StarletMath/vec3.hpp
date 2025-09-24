@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <type_traits>
+#include <ostream>
 
 /*
 Vec3
@@ -61,4 +62,6 @@ struct Vec3 {
 
 	bool operator==(const Vec3& rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z; }
 	bool operator!=(const Vec3& rhs) const { return !(*this == rhs); }
+
+	friend std::ostream& operator<<(std::ostream& os, const Vec3& v) { return os << v.x << ' ' << v.y << ' ' << v.z; }
 };
